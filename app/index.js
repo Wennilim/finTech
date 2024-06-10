@@ -1,8 +1,8 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import React from "react";
 import { useAssets } from "expo-asset";
 import { ResizeMode, Video } from "expo-av";
 import { Link } from "expo-router";
+import React from "react";
+import { Text, TouchableOpacity, View } from "react-native";
 
 const HomePage = () => {
   const [assets] = useAssets([require("../assets/videos/intro.mp4")]);
@@ -10,7 +10,7 @@ const HomePage = () => {
     <View className="flex-1 h-screen w-screen justify-between">
       {assets && (
         <Video
-        resizeMode={ResizeMode.COVER}
+          resizeMode={ResizeMode.COVER}
           isMuted
           isLooping
           shouldPlay
@@ -18,16 +18,21 @@ const HomePage = () => {
           source={{ uri: assets[0].uri }}
         />
       )}
-      <View className="flex gap-4 px-3 mt-9">
-        <Text className="flex items-center justify-center text-4xl text-white font-black uppercase">
+      <View className="flex gap-4 mt-9 relative h-full w-full">
+        <Text className="flex items-center px-3 justify-center text-4xl text-white font-black uppercase">
           Ready to change the way you money?
         </Text>
-        <View className="flex items-center justify-center gap-2">
-          <Link className="" href={"./login"} asChild>
-            <TouchableOpacity>
-              <Text className="text-white text-xl font-bold">Log In</Text>
-            </TouchableOpacity>
-          </Link>
+        <View className="flex-row items-center justify-evenly absolute bottom-20 w-full">
+          <TouchableOpacity>
+            <Link href={"./login"} asChild>
+              <Text className="text-white text-xl font-medium">Log In</Text>
+            </Link>
+          </TouchableOpacity>
+          <TouchableOpacity className="bg-white rounded-3xl px-6 py-3">
+            <Link href={"./signUp"} asChild>
+              <Text className="text-black text-xl font-medium">Sign Up</Text>
+            </Link>
+          </TouchableOpacity>
         </View>
       </View>
     </View>
