@@ -18,8 +18,8 @@ const HomePage = () => {
           source={{ uri: assets[0].uri }}
         />
       )}
-      <View className="flex gap-4 mt-9 relative h-full w-full">
-        <Text className="flex items-center px-3 justify-center text-4xl text-white font-black uppercase">
+      <View className="flex gap-4 mt-14 relative h-full w-full">
+        <Text className="flex items-center px-4 justify-center text-4xl text-white font-black uppercase">
           Ready to change the way you money?
         </Text>
         <View className="flex-row items-center justify-evenly absolute bottom-20 w-full">
@@ -28,7 +28,7 @@ const HomePage = () => {
               <Text className="text-white text-xl font-medium">Log In</Text>
             </Link>
           </TouchableOpacity>
-          <TouchableOpacity className="bg-white rounded-3xl px-6 py-3">
+          <TouchableOpacity className="bg-white rounded-3xl px-7 py-3">
             <Link href={"./signUp"} asChild>
               <Text className="text-black text-xl font-medium">Sign Up</Text>
             </Link>
