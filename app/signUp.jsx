@@ -7,10 +7,26 @@ import {
 } from "react-native";
 import React, { useState } from "react";
 import { TextInput } from "react-native-gesture-handler";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
+import { useSignUp } from "@clerk/clerk-expo";
 
 export default function SignUp() {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const router = useRouter();
+  const { signUp } = useSignUp();
+
+  const onSignup = async () => {
+    try {
+      await signUp.create({ phoneNumber: `+60${phoneNumber}` });
+      signUp.preparePhoneNumberVerification();
+      router.push({
+        pathname: "/verify/[phone]",
+        params: { phone: `+60${phoneNumber}` },
+      });
+    } catch (error) {
+      console.log('Error signing up: ',error);
+    }
+  };
   return (
     <KeyboardAvoidingView
       className="flex-1"
@@ -49,7 +65,7 @@ export default function SignUp() {
         <View className="flex-1" />
         <TouchableOpacity
           className="bg-black rounded-3xl px-7 py-3 w-full flex justify-center items-center items-content-center"
-          onPress={() => console.log("pressed")}
+          onPress={() => onSignup()}
         >
           <Text className="text-white text-lg font-normal ">Sign Up</Text>
         </TouchableOpacity>

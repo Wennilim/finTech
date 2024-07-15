@@ -8,13 +8,42 @@ import {
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { useRouter } from "expo-router";
+import { useSignIn } from "@clerk/clerk-expo";
 
 export default function Login() {
   const [phoneNumber, setPhoneNumber] = useState("");
+  const router = useRouter();
+  const { signIn } = useSignIn();
 
-  const onLoginPress = (type) => {
+  const onLoginPress = async (type) => {
     switch (type) {
       case "Phone": {
+        try {
+          const fullPhoneNumber = `+60${phoneNumber}`;
+          const { supportedFirstFactor } = await signIn.create({
+            identifier: fullPhoneNumber,
+          });
+          const firstPhoneFactor = supportedFirstFactor.find((factor) => {
+            return factor.strategy === "phone_code";
+          });
+          const { phoneNumberId } = firstPhoneFactor;
+          await signIn.prepareFirstFactor({
+            strategy: "phone_code",
+            phoneNumberId,
+          });
+          router.push({
+            pathname: "/verify/[phone]",
+            params: { phone: `+60${phoneNumber}`, signin: true },
+          });
+        } catch (error) {
+          console.log("error", JSON.stringify(err, null, 2));
+          if (isClerkAPIResponseError(err)) {
+            if (err.errors[0].code === "form_identifier_not_found") {
+              Alert.alert("Error", err.errors[0].message);
+            }
+          }
+        }
       }
     }
   };
