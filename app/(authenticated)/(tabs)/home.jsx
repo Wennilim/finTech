@@ -75,7 +75,7 @@ const Page = () => {
   ];
   return (
     <ScrollView className="bg-gray-100">
-      <View className="m-20 items-center">
+      <View className="mx-20 mb-20 mt-40 items-center">
         <View className="flex-row items-end justify-center">
           <Text className="text-xl font-bold">RM </Text>
           <Text className="text-4xl font-bold">
