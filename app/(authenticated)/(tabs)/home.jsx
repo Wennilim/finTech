@@ -4,6 +4,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import RoundBtn from "../../../components/RoundBtn";
 import { Ionicons } from "@expo/vector-icons";
 import { useBalanceStore } from "../../../store/useBalanceStore";
+import WidgetList from "../../../components/SortableList/WidgetList";
 
 const Page = () => {
   const { balance, runTransaction, transactions, clearTransactions } =
@@ -98,7 +99,7 @@ const Page = () => {
       </View>
       {open && (
         <Animated.View
-          className="flex-row mx-5 justify-end absolute z-50 -bottom-36 right-0"
+          className="flex-row mx-5 justify-end absolute z-[999] top-80 right-0 "
           style={{
             opacity: fadeAnim,
           }}
@@ -134,31 +135,43 @@ const Page = () => {
         {transactions.length === 0 && (
           <Text className="p-7 text-gray-500">No transactions yet.</Text>
         )}
-        {transactions.reverse().map((transaction) => (
-          <View key={transaction.id} className="flex-row items-center">
-            <View className="w-10 h-10 m-2 rounded-full bg-gray-200 justify-center items-center">
-              <Ionicons
-                name={transaction.amount > 0 ? "add" : "remove"}
-                size={24}
-                color="black"
-              />
-            </View>
-            <View className="flex-1">
-              <Text className="text-md font-bold">{transaction.title}</Text>
-              <Text className="text-gray-400 text-xs">
-                {transaction.date.toLocaleString()}
+
+        {/* 由于 transactions.reverse()
+        直接在原数组上进行操作，这会导致它每次调用时都改变数组的顺序。为了保持
+        transactions 数组在原状态下不被改变，可以在渲染时创建一个新的反转数组。
+        可以使用 slice() 方法创建 transactions
+        的一个浅拷贝，然后再进行反转。这样可以避免原数组被修改。 */}
+
+        {transactions
+          .slice()
+          .reverse()
+          .map((transaction) => (
+            <View key={transaction.id} className="flex-row items-center">
+              <View className="w-10 h-10 m-2 rounded-full bg-gray-200 justify-center items-center">
+                <Ionicons
+                  name={transaction.amount > 0 ? "add" : "remove"}
+                  size={24}
+                  color="black"
+                />
+              </View>
+              <View className="flex-1">
+                <Text className="text-md font-bold">{transaction.title}</Text>
+                <Text className="text-gray-400 text-xs">
+                  {transaction.date.toLocaleString()}
+                </Text>
+              </View>
+              <Text
+                className={`text-md font-semibold mx-2 ${
+                  transaction.amount < 0 ? "text-red-500" : "text-green-500"
+                }`}
+              >
+                {transaction.amount.toFixed(2)}
               </Text>
             </View>
-            <Text
-              className={`text-md font-semibold mx-2 ${
-                transaction.amount < 0 ? "text-red-500" : "text-green-500"
-              }`}
-            >
-              {transaction.amount.toFixed(2)}
-            </Text>
-          </View>
-        ))}
+          ))}
       </View>
+      <Text className="text-xl font-bold mx-5 mt-5 mb-4">Widgets</Text>
+      <WidgetList />
     </ScrollView>
   );
 };
