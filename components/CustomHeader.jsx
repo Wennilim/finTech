@@ -1,13 +1,13 @@
-import {
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-  TextInput,
-} from "react-native";
-import React from "react";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
+import React from "react";
+import {
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const CustomHeader = () => {
   const { top } = useSafeAreaInsets();
@@ -22,12 +22,28 @@ const CustomHeader = () => {
             style={styles.searchIcon}
             name="search"
             size={20}
-            color="#9E9E9E"
+            color="#717171"
           />
           <TextInput
             style={styles.input}
             placeholder="Search"
             placeholderTextColor="#9E9E9E"
+          />
+        </View>
+        <View style={styles.circle}>
+          <Ionicons
+            style={styles.searchIcon}
+            name="stats-chart"
+            size={20}
+            color="#717171"
+          />
+        </View>
+        <View style={styles.circle}>
+          <Ionicons
+            style={styles.searchIcon}
+            name="card"
+            size={20}
+            color="#717171"
           />
         </View>
       </View>
@@ -49,7 +65,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: "#9e9e9e",
+    backgroundColor: "#717171",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -71,6 +87,14 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     paddingLeft: 0,
     color: "#9E9E9E",
+  },
+  circle: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#ebebeb",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 
