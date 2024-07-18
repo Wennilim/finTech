@@ -22,11 +22,10 @@
       }
     },
     "web": {
+      "bundler": "metro",
+      "output": "server",
       "favicon": "./assets/favicon.png"
     },
-    "plugins": [
-      "expo-asset",
-      "expo-router"
-    ]
+    "plugins": ["expo-asset", "expo-router"]
   }
 }

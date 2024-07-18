@@ -1,6 +1,6 @@
 import { Link, Stack, useRouter, useSegments } from "expo-router";
 import React, { useEffect } from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { StatusBar } from "expo-status-bar";
@@ -32,11 +32,10 @@ const InitialLayout = () => {
   const segments = useSegments();
 
   useEffect(() => {
-    console.log("isSignedIn", isSignedIn);
     if (!isLoaded) return;
     const inAuthGroup = segments[0] === "(authenticated)";
     if (isSignedIn && !inAuthGroup) {
-      router.replace("/(authenticated)/(tabs)/home");
+      router.replace("/(authenticated)/(tabs)/crypto");
     } else if (!isSignedIn) {
       router.replace("/");
     }
@@ -110,6 +109,29 @@ const InitialLayout = () => {
         name="(authenticated)/(tabs)"
         options={{
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name="(authenticated)/crypto/[id]"
+        options={{
+          title: "",
+          headerLeft: () => (
+            <TouchableOpacity onPress={router.back}>
+              <Ionicons name="arrow-back" size={30} color="black" />
+            </TouchableOpacity>
+          ),
+          headerLargeTitle: true,
+          headerTransparent: true,
+          headerRight: () => (
+            <View className="flex flex-row gap-4">
+              <TouchableOpacity>
+                <Ionicons name="notifications-outline" size={30} color="black" />
+              </TouchableOpacity>
+              <TouchableOpacity>
+                <Ionicons name="star-outline" size={30} color="black" />
+              </TouchableOpacity>
+            </View>
+          ),
         }}
       />
     </Stack>

@@ -20,7 +20,13 @@ const screens = [
     title: "Transfers",
     icon: "exchange",
   },
-  { name: "crypto", title: "Crypto", icon: "bitcoin" },
+  {
+    name: "crypto",
+    title: "Crypto",
+    icon: "bitcoin",
+    header: () => <CustomHeader />,
+    isHeaderTransparent: true,
+  },
   { name: "lifestyle", title: "Lifestyle", icon: "th" },
 ];
 
