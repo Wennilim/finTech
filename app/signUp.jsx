@@ -24,7 +24,8 @@ export default function SignUp() {
         params: { phone: `+60${phoneNumber}` },
       });
     } catch (error) {
-      console.log('Error signing up: ',error);
+      console.log("error", JSON.stringify(error, null, 2));
+      console.log("Error signing up: ", error);
     }
   };
   return (

@@ -21,22 +21,26 @@ export default function Login() {
       case "Phone": {
         try {
           const fullPhoneNumber = `+60${phoneNumber}`;
+
           const { supportedFirstFactor } = await signIn.create({
             identifier: fullPhoneNumber,
           });
+
           const firstPhoneFactor = supportedFirstFactor.find((factor) => {
             return factor.strategy === "phone_code";
           });
           const { phoneNumberId } = firstPhoneFactor;
+
           await signIn.prepareFirstFactor({
             strategy: "phone_code",
             phoneNumberId,
           });
+
           router.push({
             pathname: "/verify/[phone]",
             params: { phone: `+60${phoneNumber}`, signin: true },
           });
-        } catch (error) {
+        } catch (err) {
           console.log("error", JSON.stringify(err, null, 2));
           if (isClerkAPIResponseError(err)) {
             if (err.errors[0].code === "form_identifier_not_found") {
@@ -78,7 +82,7 @@ export default function Login() {
 
         <TouchableOpacity
           className="bg-black rounded-3xl px-7 py-3 mt-4 mb-8 w-full flex justify-center items-center items-content-center"
-          onPress={onLoginPress("Phone")}
+          onPress={() => onLoginPress("Phone")}
         >
           <Text className="text-white text-lg font-normal">Continue</Text>
         </TouchableOpacity>

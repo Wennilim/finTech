@@ -1,24 +1,65 @@
-import {
-  View,
-  Text,
-  SectionList,
-  Image,
-  TouchableOpacity,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
-import React, { useState } from "react";
-import { Stack, useLocalSearchParams } from "expo-router";
-import { INFO_DATA } from "../../api/info";
-import { useHeaderHeight } from "@react-navigation/elements";
 import { Ionicons } from "@expo/vector-icons";
+import { useHeaderHeight } from "@react-navigation/elements";
+import { Stack, useLocalSearchParams } from "expo-router";
+import * as Haptics from "expo-haptics";
+import React, { useEffect, useState } from "react";
+import {
+  Image,
+  ScrollView,
+  SectionList,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
+import { CartesianChart, Line, useChartPressState } from "victory-native";
+import { INFO_DATA } from "../../api/info";
+import { TICKET_LIST } from "../../api/ticket";
+import { Circle, useFont } from "@shopify/react-native-skia";
+import { format } from "date-fns";
+import Animated, { useAnimatedProps } from "react-native-reanimated";
 const CATEGORIES = ["Overviews", "News", "Orders", "Transactions"];
+Animated.addWhitelistedNativeProps({
+  text: true,
+});
+const AnimatedTextInput = Animated.createAnimatedComponent(TextInput);
+
+const ToolTip = ({ x, y }) => {
+  return <Circle cx={x} cy={y} r={8} color="orange" />;
+};
 
 const Page = () => {
+  const font = useFont(
+    require("../../../assets/fonts/SpaceMono-Regular.ttf"),
+    12
+  );
+
   const { id } = useLocalSearchParams();
   const headerHeight = useHeaderHeight();
   const [activeIndex, setActiveIndex] = useState(0);
+  const { state, isActive } = useChartPressState({ x: 0, y: { price: 0 } });
   const { name, logo, symbol, description } = INFO_DATA[id];
+
+  useEffect(() => {
+    console.log(isActive);
+    if (isActive) Haptics.selectionAsync();
+  }, [isActive]);
+
+  const animatedText = useAnimatedProps(() => {
+    return {
+      text: `RM ${state.y.price.value.value.toFixed(2)}`,
+      defaultValue: "",
+    };
+  });
+
+  const animatedDateText = useAnimatedProps(() => {
+    const date = new Date(state.x.value.value);
+    return {
+      text: `${date.toLocaleDateString("en-GB")}`,
+      defaultValue: "",
+    };
+  });
   return (
     <>
       <Stack.Screen options={{ title: name }} />
@@ -143,23 +184,87 @@ const Page = () => {
         renderItem={({ item }) => {
           return (
             <>
-              <View style={{ height: 500, backgroundColor: "green" }}></View>
-                <View
-                  style={{
-                    marginHorizontal: 16,
-                    marginVertical: 16,
-                    padding: 16,
-                    backgroundColor: "white",
-                    borderRadius: 16,
-                    gap: 10,
-                  }}
-                >
-                  <Text style={{ fontWeight: "bold", fontSize: 16 }}>
-                    Overview
-                  </Text>
-                  <Text>{description}</Text>
-                </View>
-             
+              <View style={[styles.block, { height: 500 }]}>
+                <>
+                  {!isActive && (
+                    <View>
+                      <Text style={{ fontWeight: "bold", fontSize: 24 }}>
+                        {TICKET_LIST[
+                          TICKET_LIST.length - 1
+                        ].price.toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "MYR",
+                        })}
+                      </Text>
+                      <Text
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: 16,
+                          color: "gray",
+                        }}
+                      >
+                        Today
+                      </Text>
+                    </View>
+                  )}
+                  {isActive && (
+                    <View>
+                      <AnimatedTextInput
+                        editable={false}
+                        underlineColorAndroid="transparent"
+                        animatedProps={animatedText}
+                        style={{ fontWeight: "bold", fontSize: 24 }}
+                      ></AnimatedTextInput>
+                      <AnimatedTextInput
+                        editable={false}
+                        underlineColorAndroid="transparent"
+                        animatedProps={animatedDateText}
+                        style={{
+                          fontWeight: "bold",
+                          fontSize: 16,
+                          color: "gray",
+                        }}
+                      ></AnimatedTextInput>
+                    </View>
+                  )}
+                  <CartesianChart
+                    chartPressState={state}
+                    axisOptions={{
+                      font,
+                      tickCount: 5,
+                      labelOffset: { x: -2, y: 0 },
+                      labelColor: "gray",
+                      formatYLabel: (value) => `RM ${value}`,
+                      formatXLabel: (ms) => format(new Date(ms), "MM/yy"),
+                    }}
+                    data={TICKET_LIST}
+                    xKey="timestamp"
+                    yKeys={["price"]}
+                  >
+                    {({ points }) => (
+                      <>
+                        <Line
+                          points={points.price}
+                          color="blue"
+                          strokeWidth={3}
+                        />
+                        {isActive && (
+                          <ToolTip
+                            x={state.x.position}
+                            y={state.y.price.position}
+                          />
+                        )}
+                      </>
+                    )}
+                  </CartesianChart>
+                </>
+              </View>
+              <View style={styles.block}>
+                <Text style={{ fontWeight: "bold", fontSize: 16 }}>
+                  Overview
+                </Text>
+                <Text>{description}</Text>
+              </View>
             </>
           );
         }}
@@ -169,6 +274,14 @@ const Page = () => {
 };
 
 const styles = StyleSheet.create({
+  block: {
+    marginHorizontal: 16,
+    marginVertical: 16,
+    padding: 16,
+    backgroundColor: "white",
+    borderRadius: 16,
+    gap: 10,
+  },
   categoriesBtn: {
     padding: 10,
     paddingHorizontal: 14,
