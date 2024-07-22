@@ -42,7 +42,6 @@ const Page = () => {
   const { name, logo, symbol, description } = INFO_DATA[id];
 
   useEffect(() => {
-    console.log(isActive);
     if (isActive) Haptics.selectionAsync();
   }, [isActive]);
 

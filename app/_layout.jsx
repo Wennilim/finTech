@@ -7,6 +7,7 @@ import { StatusBar } from "expo-status-bar";
 import { ClerkProvider, useAuth } from "@clerk/clerk-expo";
 const CLERK_PUBLISHABLE_KEY = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 import * as SecureStore from "expo-secure-store";
+import { UserInactivityProvider } from "../context/UserInactivity";
 
 // Cache the Clerk JWT
 const tokenCache = {
@@ -125,7 +126,11 @@ const InitialLayout = () => {
           headerRight: () => (
             <View className="flex flex-row gap-4">
               <TouchableOpacity>
-                <Ionicons name="notifications-outline" size={30} color="black" />
+                <Ionicons
+                  name="notifications-outline"
+                  size={30}
+                  color="black"
+                />
               </TouchableOpacity>
               <TouchableOpacity>
                 <Ionicons name="star-outline" size={30} color="black" />
@@ -133,6 +138,10 @@ const InitialLayout = () => {
             </View>
           ),
         }}
+      />
+      <Stack.Screen
+        name="(authenticated)/(modals)/lock"
+        options={{ headerShown: false, animation: "none" }}
       />
     </Stack>
   );
@@ -144,10 +153,12 @@ const RootLayoutNav = () => {
       publishableKey={CLERK_PUBLISHABLE_KEY}
       tokenCache={tokenCache}
     >
-      <GestureHandlerRootView style={{ flex: 1 }}>
-        <StatusBar style="light" />
-        <InitialLayout />
-      </GestureHandlerRootView>
+      <UserInactivityProvider>
+        <GestureHandlerRootView style={{ flex: 1 }}>
+          <StatusBar style="light" />
+          <InitialLayout />
+        </GestureHandlerRootView>
+      </UserInactivityProvider>
     </ClerkProvider>
   );
 };
