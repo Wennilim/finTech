@@ -1,6 +1,6 @@
 import { Link, Stack, useRouter, useSegments } from "expo-router";
 import React, { useEffect } from "react";
-import { Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Text, TouchableOpacity, View } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { StatusBar } from "expo-status-bar";
@@ -36,13 +36,18 @@ const InitialLayout = () => {
     if (!isLoaded) return;
     const inAuthGroup = segments[0] === "(authenticated)";
     if (isSignedIn && !inAuthGroup) {
-      router.replace("/(authenticated)/(tabs)/crypto");
+      router.replace("/(authenticated)/(tabs)/home");
     } else if (!isSignedIn) {
       router.replace("/");
     }
   }, [isSignedIn]);
 
-  if (!isLoaded) return <Text>Loading...</Text>;
+  if (!isLoaded)
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size="large" color="black" />
+      </View>
+    );
 
   return (
     <Stack>

@@ -13,7 +13,10 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "This app uses Face ID to validate your indentity."
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -26,6 +29,17 @@
       "output": "server",
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-asset", "expo-router"]
+    "plugins": [
+      "expo-asset",
+      "expo-router",
+      "expo-secure-store",
+
+      [
+        "expo-local-authentication",
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID."
+        }
+      ]
+    ]
   }
 }
