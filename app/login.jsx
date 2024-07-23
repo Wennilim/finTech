@@ -22,35 +22,52 @@ export default function Login() {
         try {
           const fullPhoneNumber = `+60${phoneNumber}`;
 
-          const { supportedFirstFactor } = await signIn.create({
+          const response = await signIn.create({
             identifier: fullPhoneNumber,
           });
 
-          const firstPhoneFactor = supportedFirstFactor.find((factor) => {
-            return factor.strategy === "phone_code";
-          });
+          const { supportedFirstFactors } = response;
+
+          if (!supportedFirstFactors) {
+            throw new Error("No supported first factors found in the response");
+          }
+
+          const firstPhoneFactor = supportedFirstFactors.find(
+            (factor) => factor.strategy === "phone_code"
+          );
+
+          if (!firstPhoneFactor) {
+            throw new Error("No phone code factor found");
+          }
+
           const { phoneNumberId } = firstPhoneFactor;
 
-          await signIn.prepareFirstFactor({
+          const params = {
             strategy: "phone_code",
             phoneNumberId,
-          });
+          };
+
+          await signIn.prepareFirstFactor(params);
 
           router.push({
             pathname: "/verify/[phone]",
-            params: { phone: `+60${phoneNumber}`, signin: true },
+            params: { phone: fullPhoneNumber, signin: true },
           });
         } catch (err) {
-          console.log("error", JSON.stringify(err, null, 2));
+          console.log("Error caught:", JSON.stringify(err, null, 2));
+
           if (isClerkAPIResponseError(err)) {
-            if (err.errors[0].code === "form_identifier_not_found") {
-              Alert.alert("Error", err.errors[0].message);
-            }
+            const error = err.errors[0];
+            Alert.alert("Error", error.message);
+            console.log(`Error: ${error.code} - ${error.longMessage}`);
+          } else {
+            Alert.alert("Error", "An unexpected error occurred");
           }
         }
       }
     }
   };
+
   return (
     <KeyboardAvoidingView
       className="flex-1"

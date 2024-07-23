@@ -1,4 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
+import { Link } from "expo-router";
 import React from "react";
 import {
   StyleSheet,
@@ -14,9 +15,11 @@ const CustomHeader = () => {
   return (
     <View style={{ paddingTop: top }}>
       <View style={styles.container}>
-        <TouchableOpacity style={styles.roundBtn}>
-          <Text style={{ color: "white", fontWeight: 500 }}>SG</Text>
-        </TouchableOpacity>
+        <Link href="/(authenticated)/(modals)/account" asChild>
+          <TouchableOpacity style={styles.roundBtn}>
+            <Text style={{ color: "white", fontWeight: 500 }}>SG</Text>
+          </TouchableOpacity>
+        </Link>
         <View style={styles.searchSection}>
           <Ionicons
             style={styles.searchIcon}
