@@ -21,9 +21,9 @@ export default function Login() {
       case "Phone": {
         try {
           const fullPhoneNumber = `+60${phoneNumber}`;
-
           const response = await signIn.create({
             identifier: fullPhoneNumber,
+            strategy: "phone_code",
           });
 
           const { supportedFirstFactors } = response;
@@ -42,12 +42,10 @@ export default function Login() {
 
           const { phoneNumberId } = firstPhoneFactor;
 
-          const params = {
+          await signIn.prepareFirstFactor({
             strategy: "phone_code",
             phoneNumberId,
-          };
-
-          await signIn.prepareFirstFactor(params);
+          });
 
           router.push({
             pathname: "/verify/[phone]",
@@ -64,7 +62,19 @@ export default function Login() {
             Alert.alert("Error", "An unexpected error occurred");
           }
         }
+        break;
       }
+      case "Email":
+        // Handle email login
+        break;
+      case "Google":
+        // Handle Google login
+        break;
+      case "Apple":
+        // Handle Apple login
+        break;
+      default:
+        break;
     }
   };
 
